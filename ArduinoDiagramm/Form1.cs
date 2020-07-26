@@ -64,9 +64,7 @@ namespace ArduinoDiagramm
                     {
                          statusMessage(data.Message);
                     }
-                    var size = Convert.ToDouble(textBox1.Text);
-                    if (size == 0) size = 30;
-                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(chart1.Series[0].Points.Count, size, DateTimeIntervalType.Seconds);
+                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(chart1.Series[0].Points.Count, GetSizeView(), DateTimeIntervalType.Seconds);
                 }),
                 new object[] { this });
         }
@@ -118,11 +116,24 @@ namespace ArduinoDiagramm
             serialPort1.Close();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private double GetSizeView()
         {
-            var size = Convert.ToDouble(textBox1.Text);
+            double size;
+            try
+            {
+                size = Convert.ToDouble(textBox1.Text);
+            }
+            catch (FormatException)
+            {
+                size = 30;
+            }
             if (size == 0) size = 30;
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(chart1.Series[0].Points.Count, size, DateTimeIntervalType.Seconds);
+            return size;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {         
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(chart1.Series[0].Points.Count, GetSizeView(), DateTimeIntervalType.Seconds);
         }
     }
 }
