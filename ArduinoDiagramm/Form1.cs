@@ -30,13 +30,29 @@ namespace ArduinoDiagramm
             if (e.EventType != System.IO.Ports.SerialData.Chars) return;
             if (serialPort1.IsOpen)
             {
-                string temp = serialPort1.ReadLine();
-
-                if (temp != "" && temp != null && Convert.ToInt32(temp) != 0)
-                {                   
-                    chart1.Invoke((ThreadStart)delegate { LineChart(Convert.ToInt32(temp)); });
+                try
+                {
+                    string temp = serialPort1.ReadLine();
+                    if (temp != "" && temp != null && Convert.ToInt32(temp) != 0)
+                    {
+                        chart1.Invoke((ThreadStart)delegate { LineChart(Convert.ToInt32(temp)); });
+                    }
                 }
+                catch (FormatException data)
+                {
+                    chart1.Invoke((ThreadStart)delegate { statusMessage(data.Message);});
+                }
+                catch (System.IO.IOException data)
+                {
+                    chart1.Invoke((ThreadStart)delegate { statusMessage(data.Message); });
+                }
+
             }
+        }
+
+        private void statusMessage(string message)
+        {
+            label1.Text = message;
         }
 
         private void chart1_Click(object sender, EventArgs e)
@@ -46,19 +62,31 @@ namespace ArduinoDiagramm
         public void LineChart(int x)
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(
-                new Action<Form1>((sender) => { 
-                    chart1.Series[0].Points.Add(x); 
-                    if (chart1.Series[0].Points.Count > 100)
-                    {
-                        chart1.Series[0].Points.RemoveAt(0); ;
-                    }
+                new Action<Form1>((sender) =>
+                {
+
+                    chart1.Series[0].Points.Add(x);
+                    var i = chart1.Series[0].Points.Count > chart1.ChartAreas[0].AxisX.Interval ? chart1.Series[0].Points.Count : chart1.ChartAreas[0].AxisX.Interval;
+                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(i - chart1.ChartAreas[0].AxisX.Interval, i);
                 }),
                 new object[] { this });
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            serialPort1.Open();
+            try
+            {
+                serialPort1.Open();
+                label1.Text = "Порт открыт";
+            }
+            catch (System.IO.IOException data)
+            {
+                label1.Text = data.Message;
+            }catch(System.InvalidOperationException data)
+            {
+                label1.Text = data.Message;
+            }
+
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -69,6 +97,7 @@ namespace ArduinoDiagramm
         private void button2_Click(object sender, EventArgs e)
         {
             serialPort1.Close();
+            label1.Text = "Порт закрыт";
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -80,5 +109,6 @@ namespace ArduinoDiagramm
                 comboBox1.Items.Add(port);
             }
         }
+
     }
 }
