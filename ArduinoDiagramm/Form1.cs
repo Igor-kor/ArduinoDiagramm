@@ -120,7 +120,9 @@ namespace ArduinoDiagramm
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
+            var size = Convert.ToDouble(textBox1.Text);
+            if (size == 0) size = 30;
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoom(chart1.Series[0].Points.Count, size, DateTimeIntervalType.Seconds);
         }
     }
 }
