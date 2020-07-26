@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Threading;
 
 namespace ArduinoDiagramm
@@ -19,34 +14,34 @@ namespace ArduinoDiagramm
         {
             InitializeComponent();
             string[] portsname = SerialPort.GetPortNames();
+            textBox1.Text = "30";
             foreach (string port in portsname)
             {
                 comboBox1.Items.Add(port);
             }
         }
-        private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
-        {
 
-            if (e.EventType != System.IO.Ports.SerialData.Chars) return;
+        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (e.EventType != SerialData.Chars) return;
             if (serialPort1.IsOpen)
             {
                 try
                 {
                     string temp = serialPort1.ReadLine();
-                    if (temp != "" && temp != null && Convert.ToInt32(temp) != 0)
+                    if (temp != "" && temp != null)
                     {
-                        chart1.Invoke((ThreadStart)delegate { LineChart(Convert.ToInt32(temp)); });
+                        chart1.Invoke((ThreadStart)delegate { LineChart(temp); });
                     }
                 }
                 catch (FormatException data)
                 {
-                    chart1.Invoke((ThreadStart)delegate { statusMessage(data.Message);});
+                    chart1.Invoke((ThreadStart)delegate { statusMessage(data.Message); });
                 }
                 catch (System.IO.IOException data)
                 {
                     chart1.Invoke((ThreadStart)delegate { statusMessage(data.Message); });
                 }
-
             }
         }
 
@@ -55,19 +50,23 @@ namespace ArduinoDiagramm
             label1.Text = message;
         }
 
-        private void chart1_Click(object sender, EventArgs e)
-        {
-            chart1.Series.First().Points.Add(10);
-        }
-        public void LineChart(int x)
+        public void LineChart(string x)
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(
                 new Action<Form1>((sender) =>
                 {
-
-                    chart1.Series[0].Points.Add(x);
-                    var i = chart1.Series[0].Points.Count > chart1.ChartAreas[0].AxisX.Interval ? chart1.Series[0].Points.Count : chart1.ChartAreas[0].AxisX.Interval;
-                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(i - chart1.ChartAreas[0].AxisX.Interval, i);
+                    richTextBox1.Text += x;
+                    try
+                    {
+                        chart1.Series[0].Points.AddXY(DateTime.Now, Convert.ToInt32(x));
+                    }
+                    catch (FormatException data)
+                    {
+                         statusMessage(data.Message);
+                    }
+                    var size = Convert.ToDouble(textBox1.Text);
+                    if (size == 0) size = 30;
+                    chart1.ChartAreas[0].AxisX.ScaleView.Zoom(chart1.Series[0].Points.Count, size, DateTimeIntervalType.Seconds);
                 }),
                 new object[] { this });
         }
@@ -77,16 +76,16 @@ namespace ArduinoDiagramm
             try
             {
                 serialPort1.Open();
-                label1.Text = "Порт открыт";
+                statusMessage("Порт открыт");
             }
             catch (System.IO.IOException data)
             {
-                label1.Text = data.Message;
-            }catch(System.InvalidOperationException data)
-            {
-                label1.Text = data.Message;
+                statusMessage(data.Message);
             }
-
+            catch (InvalidOperationException data)
+            {
+                statusMessage(data.Message);
+            }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -97,7 +96,7 @@ namespace ArduinoDiagramm
         private void button2_Click(object sender, EventArgs e)
         {
             serialPort1.Close();
-            label1.Text = "Порт закрыт";
+            statusMessage("Порт закрыт");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -108,7 +107,20 @@ namespace ArduinoDiagramm
             {
                 comboBox1.Items.Add(port);
             }
+            if(portsname.Length == 0)
+            {
+                statusMessage("Доступные порты не найдены!");
+            }
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            serialPort1.Close();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
