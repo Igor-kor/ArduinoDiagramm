@@ -54,8 +54,9 @@ namespace ArduinoDiagramm
         {
             Dispatcher.CurrentDispatcher.BeginInvoke(
                 new Action<Form1>((sender) =>
-                {
-                    richTextBox1.Text += x;
+                { 
+                    richTextBox1.AppendText(x);
+                    richTextBox1.ScrollToCaret();
                     try
                     {
                         chart1.Series[0].Points.AddXY(DateTime.Now, Convert.ToInt32(x));

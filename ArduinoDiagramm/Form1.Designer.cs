@@ -55,8 +55,12 @@
             chartArea1.AxisX.IsStartedFromZero = false;
             chartArea1.AxisX.LabelStyle.Format = "hh:mm:ss";
             chartArea1.AxisX.LabelStyle.TruncatedLabels = true;
+            chartArea1.AxisX.ScaleView.MinSize = 30D;
+            chartArea1.AxisX.ScaleView.MinSizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Seconds;
             chartArea1.AxisX.ScaleView.Size = 30D;
             chartArea1.AxisX.ScaleView.SizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Seconds;
+            chartArea1.AxisX.ScaleView.SmallScrollMinSizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Seconds;
+            chartArea1.AxisX.ScaleView.SmallScrollSizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Seconds;
             chartArea1.AxisY.Interval = 50D;
             chartArea1.AxisY.Maximum = 800D;
             chartArea1.BackColor = System.Drawing.Color.DimGray;
@@ -73,7 +77,7 @@
             this.chart1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(12, 30);
+            this.chart1.Location = new System.Drawing.Point(2, 0);
             this.chart1.Name = "chart1";
             series1.BorderWidth = 3;
             series1.ChartArea = "ChartArea1";
@@ -85,7 +89,7 @@
             series1.ShadowColor = System.Drawing.Color.DarkOliveGreen;
             series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Time;
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(748, 387);
+            this.chart1.Size = new System.Drawing.Size(758, 417);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
@@ -145,6 +149,7 @@
             // 
             this.richTextBox1.Location = new System.Drawing.Point(766, 186);
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(113, 231);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
