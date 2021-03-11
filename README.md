@@ -5,4 +5,4 @@
 Позволяет правильно подобрать и настроить коэфициенты для ПИД регулировки, создавалось для проекта паяльной стании https://github.com/Igor-kor/SolderingStantion
 
 Скриншот
-- ![скрин](https://github.com/Igor-kor/SolderingStantion/blob/master/img/screenafter.jpg)
+- ![скрин](https://github.com/Igor-kor/ArduinoDiagramm/blob/master/img/screenshot.jpg)
